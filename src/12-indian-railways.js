@@ -46,4 +46,84 @@
  */
 export function railwayReservation(passengers, trains) {
   // Your code here
+  if (
+    !Array.isArray(passengers) ||
+    !Array.isArray(trains) ||
+    passengers.length === 0 ||
+    trains.length === 0
+  ) {
+    return [];
+  }
+
+  const results = [];
+
+  for (let i = 0; i < passengers.length; i++) {
+    const passenger = passengers[i];
+    let trainFound = false;
+    let allocationDone = false;
+
+    for (let j = 0; j < trains.length; j++) {
+      const train = trains[j];
+
+      if (train.trainNumber === passenger.trainNumber) {
+        trainFound = true;
+
+        if (!train.seats || typeof train.seats !== "object") {
+          break;
+        }
+
+        const { preferred, fallback } = passenger;
+
+        if (
+          train.seats.hasOwnProperty(preferred) &&
+          train.seats[preferred] > 0
+        ) {
+          train.seats[preferred] -= 1;
+          results.push({
+            name: passenger.name,
+            trainNumber: passenger.trainNumber,
+            class: preferred,
+            status: "confirmed",
+          });
+          allocationDone = true;
+        }
+        else if (
+          train.seats.hasOwnProperty(fallback) &&
+          train.seats[fallback] > 0
+        ) {
+          train.seats[fallback] -= 1;
+          results.push({
+            name: passenger.name,
+            trainNumber: passenger.trainNumber,
+            class: fallback,
+            status: "confirmed",
+          });
+          allocationDone = true;
+        }
+
+        else {
+          results.push({
+            name: passenger.name,
+            trainNumber: passenger.trainNumber,
+            class: preferred,
+            status: "waitlisted",
+          });
+          allocationDone = true;
+        }
+
+        break;
+      }
+    }
+
+    if (!trainFound) {
+      results.push({
+        name: passenger.name,
+        trainNumber: passenger.trainNumber,
+        class: null,
+        status: "train_not_found",
+      });
+    }
+  }
+
+  return results;
 }

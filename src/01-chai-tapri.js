@@ -28,4 +28,28 @@
  */
 export function chaiTapriRevenue(customers) {
   // Your code here
+  if (!Number.isInteger(customers) || customers < 1) {
+    return {
+      totalChai: 0,
+      totalRevenue: 0
+    }
+  }
+
+  let totalChai = 0;
+  let totalRevenue = 0;
+
+  for (let i = 0; i < customers; i++) {
+    if ((i+1) % 3 === 0) {
+      totalRevenue = totalRevenue + 15;
+    } else {
+      totalRevenue = totalRevenue + 10;
+    }
+
+    totalChai = totalChai + 1;
+  }
+
+  return {
+    totalChai,
+    totalRevenue
+  }
 }
